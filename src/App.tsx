@@ -5,9 +5,16 @@ import ChannelDetail from 'pages/ChannelDetail';
 import PlayListDetail from 'pages/PlayListDetail';
 import VideoPlayer from 'pages/VideoPlayer';
 import AuthGuard from 'guard/authGuard';
-import { AppBar, Toolbar, Button, Typography } from '@mui/material';
+import { AppBar, Toolbar, Button, Typography, useMediaQuery } from '@mui/material';
 import { useUser } from 'contexts/userContext';
-import { getAuth, GoogleAuthProvider, signInWithPopup, signOut } from 'firebase/auth';
+import {
+  getAuth,
+  getRedirectResult,
+  GoogleAuthProvider,
+  signInWithPopup,
+  signInWithRedirect,
+  signOut,
+} from 'firebase/auth';
 import { Playlist, Video } from 'types';
 import Landing from 'pages/Landing';
 
@@ -17,6 +24,8 @@ function App() {
   const [selectedVideo, setSelectedVideo] = useState<Video | null>(null);
   const [selectedPlaylist, setSelectedPlaylist] = useState<Playlist | null>(null);
 
+  const isMobile = useMediaQuery('(max-width: 600px)'); // Usamos estado para determinar si el dispositivo es móvil
+
   const { user, loading, setUser } = useUser();
   const auth = getAuth();
   const navigate = useNavigate();
@@ -24,13 +33,15 @@ function App() {
   const handleGoogleLogin = async () => {
     const provider = new GoogleAuthProvider();
     try {
-      const result = await signInWithPopup(auth, provider);
-      const user = result.user;
+      if (isMobile) {
+        await signInWithRedirect(auth, provider); // Usamos signInWithRedirect en móviles
+      } else {
+        const result = await signInWithPopup(auth, provider); // Usamos signInWithPopup en desktops
+        const user = result.user;
 
-      // Guarda el objeto completo de Firebase User en el contexto
-      setUser(user);
-
-      console.log('Login exitoso:', user);
+        setUser(user);
+        console.log('Login exitoso:', user);
+      }
     } catch (error) {
       console.error('Error en la autenticación:', error);
     }
@@ -70,6 +81,20 @@ function App() {
       setSelectedPlaylist(null);
     }
   }, [selectedVideo]);
+
+  useEffect(() => {
+    const auth = getAuth();
+    getRedirectResult(auth)
+      .then((result) => {
+        if (result?.user) {
+          setUser(result.user);
+          console.log('Login exitoso después de redirección:', result.user);
+        }
+      })
+      .catch((error) => {
+        console.error('Error al manejar el resultado de la redirección:', error);
+      });
+  }, []);
 
   return (
     <>
