@@ -8,10 +8,10 @@ import { v4 as uuidv4 } from 'uuid';
 
 interface VideoListContainerProps {
   videos: Video[];
-  setSelectedVideoId: Dispatch<React.SetStateAction<string | null>>;
+  setSelectedVideo: Dispatch<React.SetStateAction<Video | null>>;
 }
 
-const VideoListContainer: React.FC<VideoListContainerProps> = ({ videos, setSelectedVideoId }) => {
+const VideoListContainer: React.FC<VideoListContainerProps> = ({ videos, setSelectedVideo }) => {
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
   const isMediumScreen = useMediaQuery(theme.breakpoints.down('md'));
@@ -63,7 +63,7 @@ const VideoListContainer: React.FC<VideoListContainerProps> = ({ videos, setSele
           >
             <Card
               sx={{ borderRadius: '12px', overflow: 'hidden', height: 'fit-content', cursor: 'pointer' }}
-              onClick={() => setSelectedVideoId(video.id)}
+              onClick={() => setSelectedVideo(video)}
             >
               <CardMedia
                 component="img"

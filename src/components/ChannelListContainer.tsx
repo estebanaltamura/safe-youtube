@@ -26,8 +26,6 @@ const ChannelListContainer: React.FC<PlayListVideoContainerProps> = ({ channels,
     >
       <Grid container spacing={2} justifyContent="flex-start">
         {channels.map((channel) => {
-          const [imageError, setImageError] = useState(false);
-
           return (
             <Grid
               item
@@ -43,20 +41,19 @@ const ChannelListContainer: React.FC<PlayListVideoContainerProps> = ({ channels,
               }}
             >
               <Card
-                onClick={() => onSelectChannel({ id: channel.id, name: channel.name })}
+                onClick={() => onSelectChannel({ id: channel.channelId, name: channel.name })}
                 sx={{ borderRadius: '12px', overflow: 'hidden', height: 'fit-content', cursor: 'pointer' }}
               >
                 <CardMedia
                   component="img"
-                  image={imageError ? '' : channel.thumbnail} // Si hay un error, no se mostrará la imagen
+                  image={channel.thumbnail} // Si hay un error, no se mostrará la imagen
                   alt={channel.name}
                   sx={{
                     width: '100%',
-                    height: 'fit-content', // Altura fija para la imagen
-                    backgroundColor: imageError ? 'gray' : 'transparent', // Fondo gris si hay un error
+                    height: 'auto', // Altura fija para la imagen
+                    backgroundColor: 'transparent', // Fondo gris si hay un error
                     objectFit: 'cover', // Mantiene la proporción de la imagen
                   }}
-                  onError={() => setImageError(true)} // Maneja el error de carga de la imagen
                 />
                 <CardContent
                   sx={{

@@ -5,8 +5,18 @@ const Landing: React.FC = () => {
   // if (user) return <Navigate to="/channel-list" />;
 
   return (
-    <Box sx={{ display: 'flex', width: '300px', margin: '200px auto', justifyContent: 'center' }}>
-      LANDING
+    <Box
+      sx={{
+        display: 'flex',
+        width: '300px',
+        margin: '300px auto',
+        justifyContent: 'center',
+        textAlign: 'center',
+        fontSize: '20px',
+        fontWeight: 'bold',
+      }}
+    >
+      INGRESA A LA PLATAFORMA LOGUEANDOTE
     </Box>
   );
 };

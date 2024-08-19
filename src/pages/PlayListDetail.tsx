@@ -10,13 +10,13 @@ import { Playlist, Video } from 'types';
 interface PlayListDetailProps {
   setSelectedPlaylist: (playlist: Playlist | null) => void;
   selectedPlaylist: Playlist | null;
-  setSelectedVideoId: Dispatch<React.SetStateAction<string | null>>;
+  setSelectedVideo: Dispatch<React.SetStateAction<Video | null>>;
 }
 
 const PlayListDetail: React.FC<PlayListDetailProps> = ({
   setSelectedPlaylist,
   selectedPlaylist,
-  setSelectedVideoId,
+  setSelectedVideo,
 }) => {
   const { playlistId } = useParams();
 
@@ -85,7 +85,7 @@ const PlayListDetail: React.FC<PlayListDetailProps> = ({
       <Typography variant="h5" sx={{ width: '100%', textAlign: 'center', marginTop: '20px' }}>
         {selectedPlaylist && selectedPlaylist.title}
       </Typography>
-      <VideoListContainer videos={generalVideos} setSelectedVideoId={setSelectedVideoId} />
+      <VideoListContainer videos={generalVideos} setSelectedVideo={setSelectedVideo} />
     </div>
   );
 };

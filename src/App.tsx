@@ -8,13 +8,13 @@ import AuthGuard from 'guard/authGuard';
 import { AppBar, Toolbar, Button, Typography } from '@mui/material';
 import { useUser } from 'contexts/userContext';
 import { getAuth, GoogleAuthProvider, signInWithPopup, signOut } from 'firebase/auth';
-import { Playlist } from 'types';
+import { Playlist, Video } from 'types';
 import Landing from 'pages/Landing';
 
 function App() {
   // Estados para el canal, video y playlist seleccionados
   const [selectedChannel, setSelectedChannel] = useState<{ id: string; name: string } | null>(null);
-  const [selectedVideoId, setSelectedVideoId] = useState<string | null>(null);
+  const [selectedVideo, setSelectedVideo] = useState<Video | null>(null);
   const [selectedPlaylist, setSelectedPlaylist] = useState<Playlist | null>(null);
 
   const { user, loading, setUser } = useUser();
@@ -53,30 +53,30 @@ function App() {
       // Lógica para navegar basándonos en el estado de selección
       if (!selectedChannel) {
         navigate('/channel-list');
-      } else if (selectedChannel && !selectedPlaylist && !selectedVideoId) {
+      } else if (selectedChannel && !selectedPlaylist && !selectedVideo) {
         navigate(`/channel-detail/${selectedChannel.id}/${selectedChannel.name}`);
-      } else if (selectedChannel && selectedPlaylist && !selectedVideoId) {
+      } else if (selectedChannel && selectedPlaylist && !selectedVideo) {
         navigate(`/playlist-detail/${selectedPlaylist.id}`);
-      } else if (selectedChannel && selectedVideoId) {
-        navigate(`/videoPlayer/${selectedChannel.id}/videos/${selectedVideoId}`);
+      } else if (selectedChannel && selectedVideo) {
+        navigate(`/videoPlayer/${selectedChannel.id}/videos/${selectedVideo.id}`);
       }
     } else {
       navigate('/login');
     }
-  }, [selectedChannel, selectedPlaylist, selectedVideoId, navigate, user, loading]);
+  }, [selectedChannel, selectedPlaylist, selectedVideo, navigate, user, loading]);
 
   useEffect(() => {
-    if (selectedVideoId) {
+    if (selectedVideo) {
       setSelectedPlaylist(null);
     }
-  }, [selectedVideoId]);
+  }, [selectedVideo]);
 
   return (
     <>
       <AppBar position="static">
         <Toolbar>
           <Typography variant="h6" sx={{ flexGrow: 1 }}>
-            Mi Aplicación
+            Safe youtube
           </Typography>
           {!user ? (
             <Button color="inherit" onClick={handleGoogleLogin}>
@@ -108,7 +108,7 @@ function App() {
               <ChannelDetail
                 setSelectedPlaylist={setSelectedPlaylist}
                 setSelectedChannel={setSelectedChannel}
-                setSelectedVideoId={setSelectedVideoId}
+                setSelectedVideo={setSelectedVideo}
               />
             </AuthGuard>
           }
@@ -120,7 +120,7 @@ function App() {
               <PlayListDetail
                 setSelectedPlaylist={setSelectedPlaylist}
                 selectedPlaylist={selectedPlaylist}
-                setSelectedVideoId={setSelectedVideoId}
+                setSelectedVideo={setSelectedVideo}
               />
             </AuthGuard>
           }
@@ -129,7 +129,7 @@ function App() {
           path="/videoPlayer/:channelId/videos/:videoId"
           element={
             <AuthGuard>
-              <VideoPlayer setSelectedVideoId={setSelectedVideoId} />
+              <VideoPlayer setSelectedVideo={setSelectedVideo} selectedVideo={selectedVideo} />
             </AuthGuard>
           }
         />

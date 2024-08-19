@@ -15,10 +15,17 @@ export const getVideosDetails = async (videoIds: string[]): Promise<Video[]> => 
     return response.data.items.map((item: any) => {
       const duration = item.contentDetails.duration;
       const viewCount = item.statistics.viewCount;
+
+      // Obtener la miniatura en la mayor resolución posible
+      const thumbnail =
+        item.snippet.thumbnails.maxres?.url ||
+        item.snippet.thumbnails.standard?.url ||
+        item.snippet.thumbnails.high.url;
+
       return {
         id: item.id,
         title: item.snippet.title,
-        thumbnail: item.snippet.thumbnails.high.url,
+        thumbnail, // Miniatura en Full HD si está disponible
         publishedAt: item.snippet.publishedAt,
         duration,
         viewCount,

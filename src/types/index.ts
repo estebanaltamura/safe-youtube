@@ -1,7 +1,8 @@
 export interface Channel {
-  id: string;
+  channelId: string;
   name: string;
   thumbnail: string;
+  childId: string;
 }
 
 export interface Video {

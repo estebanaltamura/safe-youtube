@@ -12,8 +12,8 @@ import PlayListVideoContainer from 'components/PlayListVideosContainer';
 const ChannelDetail: React.FC<{
   setSelectedPlaylist: Dispatch<React.SetStateAction<Playlist | null>>;
   setSelectedChannel: Dispatch<React.SetStateAction<{ id: string; name: string } | null>>;
-  setSelectedVideoId: Dispatch<React.SetStateAction<string | null>>;
-}> = ({ setSelectedPlaylist, setSelectedChannel, setSelectedVideoId }) => {
+  setSelectedVideo: Dispatch<React.SetStateAction<Video | null>>;
+}> = ({ setSelectedPlaylist, setSelectedChannel, setSelectedVideo }) => {
   const { channelId, channelName } = useParams();
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
@@ -48,7 +48,7 @@ const ChannelDetail: React.FC<{
       const scrollPosition = scrollTop + clientHeight;
       const threshold = scrollHeight * 0.9;
 
-      if (scrollPosition >= threshold && !isFetching && playlistsNextPageToken && tabIndex === 0) {
+      if (scrollPosition >= threshold && !isFetching && playlistsNextPageToken && tabIndex === 1) {
         setIsFetching(true);
         await fetchPlaylists(playlistsNextPageToken); // Carga más playlists usando el nextPageToken
         setIsFetching(false);
@@ -64,7 +64,7 @@ const ChannelDetail: React.FC<{
       const scrollPosition = scrollTop + clientHeight;
       const threshold = scrollHeight * 0.9;
 
-      if (scrollPosition >= threshold && !isFetching && videosNextPageToken && tabIndex === 1) {
+      if (scrollPosition >= threshold && !isFetching && videosNextPageToken && tabIndex === 0) {
         setIsFetching(true);
         await fetchVideos(videosNextPageToken); // Carga más videos usando el nextPageToken
         setIsFetching(false);
@@ -140,13 +140,13 @@ const ChannelDetail: React.FC<{
       </Tabs>
 
       {tabIndex === 0 && (
-        <Box onScroll={handleScrollVideos} sx={{ overflowY: 'auto', height: 'calc(100vh - 200px)' }}>
-          <VideoListContainer videos={generalVideos} setSelectedVideoId={setSelectedVideoId} />
+        <Box onScroll={handleScrollVideos} sx={{ overflowY: 'auto', height: 'calc(100vh - 255px)' }}>
+          <VideoListContainer videos={generalVideos} setSelectedVideo={setSelectedVideo} />
         </Box>
       )}
 
       {tabIndex === 1 && (
-        <Box onScroll={handleScrollPlaylists} sx={{ overflowY: 'auto', height: 'calc(100vh - 188px)' }}>
+        <Box onScroll={handleScrollPlaylists} sx={{ overflowY: 'auto', height: 'calc(100vh - 255px)' }}>
           <PlayListVideoContainer playlists={playlists} setSelectedPlaylist={setSelectedPlaylist} />
         </Box>
       )}

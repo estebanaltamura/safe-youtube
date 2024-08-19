@@ -22,7 +22,6 @@ const PlayListVideoContainer: React.FC<PlayListVideoContainerProps> = ({
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
   const isMediumScreen = useMediaQuery(theme.breakpoints.down('md'));
-  const [imageError, setImageError] = useState(false);
 
   const cardMinWidth = 270; // Ancho mínimo de la tarjeta
   const cardMaxWidth = 340; // Ancho máximo de la tarjeta
@@ -55,15 +54,14 @@ const PlayListVideoContainer: React.FC<PlayListVideoContainerProps> = ({
             >
               <CardMedia
                 component="img"
-                image={imageError ? '' : playlist.thumbnail} // Si hay un error, no se mostrará la imagen
+                image={playlist.thumbnail} // Si hay un error, no se mostrará la imagen
                 alt={playlist.title}
                 sx={{
                   width: '100%',
-                  height: '150px', // Altura fija para la imagen
-                  backgroundColor: imageError ? 'gray' : 'transparent', // Fondo gris si hay un error
+                  height: 'auto', // Altura fija para la imagen
+                  backgroundColor: 'transparent', // Fondo gris si hay un error
                   objectFit: 'cover', // Mantiene la proporción de la imagen
                 }}
-                onError={() => setImageError(true)} // Maneja el error de carga de la imagen
               />
               <CardContent
                 sx={{
