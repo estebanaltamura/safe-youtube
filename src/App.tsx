@@ -76,7 +76,7 @@ function App() {
       <AppBar position="static">
         <Toolbar>
           <Typography variant="h6" sx={{ flexGrow: 1 }}>
-            Safe youtube
+            SAFE YOUTUBE
           </Typography>
           {!user ? (
             <Button color="inherit" onClick={handleGoogleLogin}>
