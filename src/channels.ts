@@ -8,10 +8,10 @@ export const channels: Channel[] = [
       '//yt3.ggpht.com/PrZwRLLSaiXr5t-GRUhUFch2Qlol1G_voyuo-jJ4y-mqcVza7o7j_24yGRiydUP7UsQiKwo7=s176-c-k-c0x00ffffff-no-rj-mo', // Thumbnail URL
   },
   {
-    id: 'UCBJycsmduvYEL83R_U4JriQ', // Google Chrome Developers Channel ID
-    name: 'Google Chrome Developers',
+    id: 'UC8LeXCWOalN8SxlrPcG-PaQ', // Google Chrome Developers Channel ID
+    name: 'Midudev',
     thumbnail:
-      'https://yt3.ggpht.com/ytc/AAUvwnhGzzT39fQoGVkWpGck4lkVBuNxXm3C0JX2UZkW=s176-c-k-c0x00ffffff-no-rj', // Thumbnail URL
+      'https://yt3.googleusercontent.com/wpc2B6nslz9DW_pd-KZjlQ26Ds9DLVom3yeMFy87sIZcfZGe7AXVqlZUvP-ePshI7VXvqiDRpWQ=s160-c-k-c0x00ffffff-no-rj', // Thumbnail URL
   },
   {
     id: 'UC8butISFwT-Wl7EV0hUK0BQ', // freeCodeCamp Channel ID
