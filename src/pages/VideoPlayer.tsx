@@ -41,7 +41,7 @@ const VideoPlayer: React.FC = () => {
           rel: 0,
           modestbranding: 1,
           showinfo: 0,
-          fs: 0, // Pantalla completa deshabilitada
+          fs: 1, // Pantalla completa deshabilitada
           disablekb: 1,
           iv_load_policy: 3,
           playsinline: 1,
