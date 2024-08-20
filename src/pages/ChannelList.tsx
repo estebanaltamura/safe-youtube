@@ -12,7 +12,6 @@ const ChannelList: React.FC = () => {
   const fetchChannels = async (childId: string) => {
     const channels: Channel[] | [] = await getChannelsByChildId('123456');
 
-    console.log(channels);
     setChannels(channels);
   };
 

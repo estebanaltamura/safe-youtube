@@ -4,25 +4,42 @@ import { Channel } from 'types';
 
 const getChannelsByChildId = async (childId: string): Promise<Channel[]> => {
   try {
-    // Obtén la referencia a la colección 'channels'
+    const db = getFirestore();
+
+    // 1. Obtener los channelIds de la tabla 'channel_child'
+    const channelChildCollection = collection(db, 'channel_child');
+    const q1 = query(channelChildCollection, where('childId', '==', childId));
+    const channelChildSnapshot = await getDocs(q1);
+
+    const channelIds = channelChildSnapshot.docs.map((doc) => doc.data().channelId);
+
+    // Si no hay channelIds asociados, devolvemos un array vacío
+    if (channelIds.length === 0) {
+      return [];
+    }
+
+    // 2. Consulta a 'channels' en lotes de 30 channelIds
     const channelsCollection = collection(db, 'channels');
+    const channels: Channel[] = [];
 
-    // Crea una consulta que filtre los documentos por 'childId'
-    const q = query(channelsCollection, where('childId', '==', childId));
+    // Dividimos los channelIds en lotes de 30
+    const batchSize = 30;
+    for (let i = 0; i < channelIds.length; i += batchSize) {
+      const batchIds = channelIds.slice(i, i + batchSize);
+      const q2 = query(channelsCollection, where('channelId', 'in', batchIds));
+      const channelsSnapshot = await getDocs(q2);
 
-    // Ejecuta la consulta
-    const querySnapshot = await getDocs(q);
-
-    // Mapea los resultados a un array de objetos Channel
-    const channels: Channel[] = querySnapshot.docs.map((doc) => {
-      const data = doc.data();
-      return {
-        channelId: data.channelId,
-        name: data.name,
-        thumbnail: data.thumbnail,
-        childId: data.childId,
-      };
-    });
+      // Mapeamos los resultados y los añadimos al array 'channels'
+      channelsSnapshot.docs.forEach((doc) => {
+        const data = doc.data();
+        channels.push({
+          channelId: data.channelId,
+          name: data.name,
+          thumbnail: data.thumbnail,
+          // Otras propiedades de 'Channel' si es necesario
+        });
+      });
+    }
 
     return channels;
   } catch (error) {

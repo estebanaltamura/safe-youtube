@@ -9,12 +9,17 @@ const ChannelListCard: React.FC<{ channel: Channel }> = ({ channel }) => {
 
   const redirectToChannelDetail = (channelId: string, channelName: string) => {
     const encodedPlaylistName = encodeURIComponent(channelName);
-
     navigate(`/channel-detail/${channelId}/${encodedPlaylistName}`);
   };
 
   const handleError = () => {
     setErrorImage(true);
+  };
+
+  // Función para obtener la URL de alta resolución
+  const getHDThumbnail = (url: string) => {
+    // Reemplaza los parámetros de la URL para obtener una miniatura en alta definición (HD)
+    return url.replace(/=s\d+-[a-zA-Z0-9-]+$/, '=s1000'); // Ajustar a s800 para una resolución HD
   };
 
   return (
@@ -25,7 +30,7 @@ const ChannelListCard: React.FC<{ channel: Channel }> = ({ channel }) => {
       <Box
         sx={{
           width: '100%',
-          height: '200px', // Ajusta la altura de la imagen según sea necesario
+          height: 'auto', // Ajusta la altura de la imagen según sea necesario
           backgroundColor: errorImage ? 'gray' : 'transparent',
           display: 'flex',
           justifyContent: 'center',
@@ -38,11 +43,12 @@ const ChannelListCard: React.FC<{ channel: Channel }> = ({ channel }) => {
           </Typography>
         ) : (
           <img
-            src={channel.thumbnail}
+            src={getHDThumbnail(channel.thumbnail)} // Aplicamos la función para obtener la URL en HD
             alt={channel.name}
+            onError={handleError}
             style={{
               width: '100%',
-              height: '100%',
+              height: 'auto',
               objectFit: 'cover',
             }}
           />

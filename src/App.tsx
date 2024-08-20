@@ -17,6 +17,11 @@ import {
 } from 'firebase/auth';
 import { Playlist, Video } from 'types';
 import Landing from 'pages/Landing';
+import { create } from 'domain';
+import { createChannel_ChildFromList } from 'services/createChannel_ChildFromList';
+import { channelChildToCreate } from 'channel_childToCreate';
+import createChannelsFromList from 'services/createChannelsFromList';
+import { channelsToCreate } from 'channelsToCreate';
 
 function App() {
   const [selectedChannel, setSelectedChannel] = useState<{ id: string; name: string } | null>(null);
@@ -80,13 +85,22 @@ function App() {
     }
   }, [selectedVideo]);
 
+  let initialCreationDone = false;
+
+  useEffect(() => {
+    !initialCreationDone && doAsync();
+
+    async function doAsync() {
+      initialCreationDone = true;
+      //await createChannelsFromList(channelsToCreate);
+    }
+  }, [initialCreationDone]);
+
   return (
     <>
       <AppBar position="static">
         <Toolbar>
-          <Typography variant="h6" sx={{ flexGrow: 1 }}>
-            SAFE YOUTUBE
-          </Typography>
+          <img src="/favicon.png" alt="Safe Youtube" style={{ width: '64px', height: 'auto' }} />
           {/* {!user ? (
             <Button color="inherit" onClick={handleGoogleLogin}>
               Login

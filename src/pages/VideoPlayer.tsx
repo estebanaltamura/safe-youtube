@@ -113,8 +113,7 @@ const VideoPlayer: React.FC = () => {
           width: '100%',
           background: '#000',
           position: 'relative',
-          paddingTop: '56.25%', // Aspect ratio 16:9
-          height: 0,
+          height: 'calc(100vh - 64px)', // Máxima altura del video
         }}
       >
         <div
@@ -138,7 +137,7 @@ const VideoPlayer: React.FC = () => {
               top: 0,
               left: 0,
               width: '100%',
-              height: 'calc(100vh - 64px - 50px)', // Deja 50px para los controles
+              height: 'calc(100vh - 64px - 34px)', // Deja 50px para los controles
               backgroundColor: 'black', // Fondo negro pleno
               backgroundImage: `url(${thumbnailUrl})`,
               backgroundSize: 'cover',
