@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Box, Button } from '@mui/material';
+import { Box, Button, useMediaQuery, useTheme } from '@mui/material';
 import KeyboardArrowLeftOutlinedIcon from '@mui/icons-material/KeyboardArrowLeftOutlined';
 
 declare global {
@@ -14,6 +14,8 @@ const VideoPlayer: React.FC = () => {
   const { videoId } = useParams();
   const iframeRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   useEffect(() => {
     const loadYouTubeAPI = () => {
@@ -58,7 +60,7 @@ const VideoPlayer: React.FC = () => {
           background: '#000',
           position: 'relative',
           top: '48px',
-          height: 'calc(100vh - 48px)', // Máxima altura del video menos barra de navegación
+          height: isMobile ? 'calc(95vh - 48px)' : 'calc(100vh - 48px)', // Máxima altura del video menos barra de navegación
         }}
       >
         <div
