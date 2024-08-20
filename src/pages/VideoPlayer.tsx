@@ -75,19 +75,6 @@ const VideoPlayer: React.FC = () => {
         ></div>
 
         {/* Capa transparente que evita clics en el video pero deja libres los controles */}
-        <Box
-          sx={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            width: '100%',
-            height: 'calc(100vh - 64px - 50px)', // Deja 50px para los controles
-            backgroundColor: 'rgba(0, 0, 0, 0)', // Capa completamente transparente
-            zIndex: 2, // Asegurarnos de que esté sobre el video
-            pointerEvents: 'auto', // Permitir interacción con esta capa
-          }}
-          onClick={(e) => e.stopPropagation()} // Evitar que los clics pasen al video
-        />
       </Box>
     </>
   );
