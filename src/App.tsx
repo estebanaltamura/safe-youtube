@@ -22,6 +22,8 @@ import { createChannel_ChildFromList } from 'services/createChannel_ChildFromLis
 import { channelChildToCreate } from 'channel_childToCreate';
 import createChannelsFromList from 'services/createChannelsFromList';
 import { channelsToCreate } from 'channelsToCreate';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import { fontSize } from '@mui/system';
 
 function App() {
   const [selectedChannel, setSelectedChannel] = useState<{ id: string; name: string } | null>(null);
@@ -98,11 +100,16 @@ function App() {
 
   return (
     <>
-      <AppBar position="static">
-        <Toolbar>
-          <img src="/favicon.png" alt="Safe Youtube" style={{ width: '64px', height: 'auto' }} />
+      <AppBar position="static" sx={{ height: '48px' }}>
+        <Toolbar sx={{ height: '48px !important', minHeight: '48px !important' }}>
+          <img src="/favicon.png" alt="Safe Youtube" style={{ width: '48px', height: 'auto' }} />
           <Box sx={{ display: 'flex', flexGrow: 1 }}></Box>
-          <>Copy</>
+          <Button
+            startIcon={<ContentCopyIcon />}
+            sx={{ position: 'relative', top: '2px', color: 'white', fontSize: '11px' }}
+          >
+            Copiar enlace
+          </Button>
           {/* {!user ? (
             <Button color="inherit" onClick={handleGoogleLogin}>
               Login

@@ -72,9 +72,9 @@ const PlayListDetail: React.FC = () => {
         startIcon={<KeyboardArrowLeftOutlinedIcon sx={{ position: 'relative', top: '-1px' }} />}
         sx={{
           position: 'fixed',
-          top: '12px',
+          top: '8px',
           left: '50%',
-          fontSize: '16px',
+          fontSize: '14px',
           transform: 'translateX(-50%)',
           zIndex: 1000,
           color: 'white',

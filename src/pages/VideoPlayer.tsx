@@ -60,9 +60,9 @@ const VideoPlayer: React.FC = () => {
         startIcon={<KeyboardArrowLeftOutlinedIcon sx={{ position: 'relative', top: '-1px' }} />}
         sx={{
           position: 'fixed',
-          top: '12px',
+          top: '8px',
           left: '50%',
-          fontSize: '16px',
+          fontSize: '14px',
           transform: 'translateX(-50%)',
           zIndex: 1000,
           color: 'white',
@@ -77,7 +77,7 @@ const VideoPlayer: React.FC = () => {
           width: '100%',
           background: '#000',
           position: 'relative',
-          height: 'calc(100vh - 64px)', // Máxima altura del video menos barra de navegación
+          height: 'calc(100vh - 48px)', // Máxima altura del video menos barra de navegación
         }}
       >
         <div
