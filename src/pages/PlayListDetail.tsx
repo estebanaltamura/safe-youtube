@@ -62,28 +62,12 @@ const PlayListDetail: React.FC = () => {
     }
   }, [playlistId]);
 
-  const handleBackClick = () => {
-    navigate(-1);
-  };
-
   return (
     <div>
-      <Button
-        startIcon={<KeyboardArrowLeftOutlinedIcon sx={{ position: 'relative', top: '-1px' }} />}
-        sx={{
-          position: 'fixed',
-          top: '8px',
-          left: '50%',
-          fontSize: '14px',
-          transform: 'translateX(-50%)',
-          zIndex: 1000,
-          color: 'white',
-        }}
-        onClick={handleBackClick}
+      <Typography
+        variant="h5"
+        sx={{ paddingTop: '48px', width: '100%', textAlign: 'center', marginTop: '20px' }}
       >
-        Volver
-      </Button>
-      <Typography variant="h5" sx={{ width: '100%', textAlign: 'center', marginTop: '20px' }}>
         {playlistName && decodeURIComponent(playlistName)}
       </Typography>
       <Box onScroll={handleScroll} sx={{ overflowY: 'auto', height: 'calc(100vh - 116px)' }}>

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Navigate, Route, Routes, useNavigate } from 'react-router-dom';
+import { Navigate, Route, Routes, useLocation, useNavigate, useParams } from 'react-router-dom';
 import ChannelList from 'pages/ChannelList';
 import ChannelDetail from 'pages/ChannelDetail';
 import PlayListDetail from 'pages/PlayListDetail';
@@ -24,11 +24,14 @@ import createChannelsFromList from 'services/createChannelsFromList';
 import { channelsToCreate } from 'channelsToCreate';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import { fontSize } from '@mui/system';
+import KeyboardArrowLeftOutlinedIcon from '@mui/icons-material/KeyboardArrowLeftOutlined';
 
 function App() {
+  const location = useLocation();
   const [selectedChannel, setSelectedChannel] = useState<{ id: string; name: string } | null>(null);
   const [selectedVideo, setSelectedVideo] = useState<Video | null>(null);
   const [selectedPlaylist, setSelectedPlaylist] = useState<Playlist | null>(null);
+  const [copyUrlKeyText, setCopyUrlKeyText] = useState('Copiar enlace');
 
   const isMobile = useMediaQuery('(max-width: 600px)'); // Verificamos si es un dispositivo móvil
 
@@ -60,6 +63,25 @@ function App() {
       navigate('/login');
     } catch (error) {
       console.error('Error al cerrar sesión:', error);
+    }
+  };
+
+  const handleBackClick = () => {
+    navigate(-1);
+  };
+
+  const copyToClipboard = async () => {
+    try {
+      const currentUrl = window.location.href;
+      await navigator.clipboard.writeText(currentUrl);
+      setCopyUrlKeyText('Enlace copiado!');
+
+      const timeOut = setTimeout(() => {
+        setCopyUrlKeyText('Copiar enlace');
+        clearTimeout(timeOut);
+      }, 1500);
+    } catch (error) {
+      console.error('Failed to copy the URL:', error);
     }
   };
 
@@ -100,16 +122,35 @@ function App() {
 
   return (
     <>
-      <AppBar position="static" sx={{ height: '48px' }}>
+      <AppBar position="fixed" sx={{ height: '48px' }}>
         <Toolbar sx={{ height: '48px !important', minHeight: '48px !important' }}>
           <img src="/favicon.png" alt="Safe Youtube" style={{ width: '48px', height: 'auto' }} />
-          <Box sx={{ display: 'flex', flexGrow: 1 }}></Box>
           <Button
-            startIcon={<ContentCopyIcon />}
-            sx={{ position: 'relative', top: '2px', color: 'white', fontSize: '11px' }}
+            startIcon={<KeyboardArrowLeftOutlinedIcon sx={{ position: 'relative', top: '-1px' }} />}
+            sx={{
+              position: 'fixed',
+              top: '8px',
+              left: '50%',
+              fontSize: '14px',
+              transform: 'translateX(-50%)',
+              zIndex: '1000 !important',
+              color: 'white',
+            }}
+            onClick={handleBackClick}
           >
-            Copiar enlace
+            Volver
           </Button>
+          <Box sx={{ display: 'flex', flexGrow: 1 }}></Box>
+          {location.pathname.includes('videoPlayer') && (
+            <Button
+              onClick={copyToClipboard}
+              startIcon={<ContentCopyIcon />}
+              sx={{ position: 'relative', top: '2px', color: 'white', fontSize: '11px' }}
+            >
+              {copyUrlKeyText}
+            </Button>
+          )}
+
           {/* {!user ? (
             <Button color="inherit" onClick={handleGoogleLogin}>
               Login

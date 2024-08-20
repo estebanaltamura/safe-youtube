@@ -15,10 +15,6 @@ const VideoPlayer: React.FC = () => {
   const iframeRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
 
-  const handleBackClick = () => {
-    navigate(-1);
-  };
-
   useEffect(() => {
     const loadYouTubeAPI = () => {
       if (window.YT && window.YT.Player) {
@@ -56,27 +52,12 @@ const VideoPlayer: React.FC = () => {
 
   return (
     <>
-      <Button
-        startIcon={<KeyboardArrowLeftOutlinedIcon sx={{ position: 'relative', top: '-1px' }} />}
-        sx={{
-          position: 'fixed',
-          top: '8px',
-          left: '50%',
-          fontSize: '14px',
-          transform: 'translateX(-50%)',
-          zIndex: 1000,
-          color: 'white',
-        }}
-        onClick={handleBackClick}
-      >
-        Volver
-      </Button>
-
       <Box
         sx={{
           width: '100%',
           background: '#000',
           position: 'relative',
+          top: '48px',
           height: 'calc(100vh - 48px)', // Máxima altura del video menos barra de navegación
         }}
       >

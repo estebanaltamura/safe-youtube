@@ -27,7 +27,10 @@ const ChannelList: React.FC = () => {
 
   return (
     <>
-      <Typography variant="h5" sx={{ width: '100%', textAlign: 'center', marginTop: '20px' }}>
+      <Typography
+        variant="h5"
+        sx={{ paddingTop: '48px', width: '100%', textAlign: 'center', marginTop: '20px' }}
+      >
         Canales
       </Typography>
       {channels.length > 0 && <ChannelListContainer channels={channels} />}
