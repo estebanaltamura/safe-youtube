@@ -60,7 +60,7 @@ const VideoPlayer: React.FC = () => {
           background: '#000',
           position: 'relative',
           top: '48px',
-          height: isMobile ? 'calc(95vh - 48px)' : 'calc(100vh - 48px)', // Máxima altura del video menos barra de navegación
+          height: isMobile ? 'calc(90vh - 48px)' : 'calc(100vh - 48px)', // Máxima altura del video menos barra de navegación
         }}
       >
         <div
