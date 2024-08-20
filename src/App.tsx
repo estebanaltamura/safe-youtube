@@ -147,7 +147,7 @@ function App() {
               startIcon={<ContentCopyIcon />}
               sx={{ position: 'relative', top: '2px', color: 'white', fontSize: '11px' }}
             >
-              {copyUrlKeyText}
+              {!isMobile && copyUrlKeyText}
             </Button>
           )}
 
