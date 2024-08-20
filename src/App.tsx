@@ -74,25 +74,6 @@ function App() {
     fetchRedirectResult();
   }, [auth, setUser]);
 
-  // Navegación automática según la selección
-  useEffect(() => {
-    if (loading) return; // No hacer nada mientras loading es true
-
-    // if (user) {
-    //   if (!selectedChannel) {
-    //     navigate('/channel-list');
-    //   } else if (selectedChannel && !selectedPlaylist && !selectedVideo) {
-    //     navigate(`/channel-detail/${selectedChannel.id}/${selectedChannel.name}`);
-    //   } else if (selectedChannel && selectedPlaylist && !selectedVideo) {
-    //     navigate(`/playlist-detail/${selectedPlaylist.id}`);
-    //   } else if (selectedChannel && selectedVideo) {
-    //     navigate(`/videoPlayer/${selectedChannel.id}/videos/${selectedVideo.id}`);
-    //   }
-    // } else {
-    //   navigate('/login');
-    // }
-  }, [selectedChannel, selectedPlaylist, selectedVideo, navigate, user, loading]);
-
   useEffect(() => {
     if (selectedVideo) {
       setSelectedPlaylist(null);
