@@ -16,11 +16,15 @@ const ChannelList: React.FC = () => {
     setChannels(channels);
   };
 
+  // useEffect(() => {
+  //   if (user?.uid) {
+  //     fetchChannels('123456');
+  //   }
+  // }, [user]);
+
   useEffect(() => {
-    if (user?.uid) {
-      fetchChannels('123456');
-    }
-  }, [user]);
+    fetchChannels('123456');
+  }, []);
 
   return (
     <>
