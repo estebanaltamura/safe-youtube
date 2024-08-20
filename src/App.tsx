@@ -125,21 +125,25 @@ function App() {
       <AppBar position="fixed" sx={{ height: '48px' }}>
         <Toolbar sx={{ height: '48px !important', minHeight: '48px !important' }}>
           <img src="/favicon.png" alt="Safe Youtube" style={{ width: '48px', height: 'auto' }} />
-          <Button
-            startIcon={<KeyboardArrowLeftOutlinedIcon sx={{ position: 'relative', top: '-1px' }} />}
-            sx={{
-              position: 'fixed',
-              top: '8px',
-              left: '50%',
-              fontSize: '14px',
-              transform: 'translateX(-50%)',
-              zIndex: '1000 !important',
-              color: 'white',
-            }}
-            onClick={handleBackClick}
-          >
-            Volver
-          </Button>
+
+          {!location.pathname.includes('channel-list') && (
+            <Button
+              startIcon={<KeyboardArrowLeftOutlinedIcon sx={{ position: 'relative', top: '-1px' }} />}
+              sx={{
+                position: 'fixed',
+                top: '8px',
+                left: '50%',
+                fontSize: '14px',
+                transform: 'translateX(-50%)',
+                zIndex: '1000 !important',
+                color: 'white',
+              }}
+              onClick={handleBackClick}
+            >
+              Volver
+            </Button>
+          )}
+
           <Box sx={{ display: 'flex', flexGrow: 1 }}></Box>
           {location.pathname.includes('videoPlayer') && (
             <Button
