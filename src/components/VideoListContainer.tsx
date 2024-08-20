@@ -3,18 +3,20 @@ import { Grid, Card, CardMedia, CardContent, Typography, useMediaQuery, useTheme
 import { Video } from 'types';
 import { formatViewCount } from 'utils';
 import { v4 as uuidv4 } from 'uuid';
+import { useNavigate } from 'react-router-dom';
 
 // Define la interfaz de Video
 
 interface VideoListContainerProps {
   videos: Video[];
-  setSelectedVideo: Dispatch<React.SetStateAction<Video | null>>;
 }
 
-const VideoListContainer: React.FC<VideoListContainerProps> = ({ videos, setSelectedVideo }) => {
+const VideoListContainer: React.FC<VideoListContainerProps> = ({ videos }) => {
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
   const isMediumScreen = useMediaQuery(theme.breakpoints.down('md'));
+
+  const navigate = useNavigate();
 
   const cardMinWidth = 270; // Ancho mínimo de la tarjeta
   const cardMaxWidth = 340; // Ancho máximo de la tarjeta
@@ -37,6 +39,10 @@ const VideoListContainer: React.FC<VideoListContainerProps> = ({ videos, setSele
     const minutes = Math.floor(totalSeconds / 60);
     const seconds = totalSeconds % 60;
     return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+  };
+
+  const redirectToVideoPlayer = (videoId: string) => {
+    navigate(`/videoPlayer/${videoId}`);
   };
 
   return (
@@ -63,7 +69,7 @@ const VideoListContainer: React.FC<VideoListContainerProps> = ({ videos, setSele
           >
             <Card
               sx={{ borderRadius: '12px', overflow: 'hidden', height: 'fit-content', cursor: 'pointer' }}
-              onClick={() => setSelectedVideo(video)}
+              onClick={() => redirectToVideoPlayer(video.id)}
             >
               <CardMedia
                 component="img"

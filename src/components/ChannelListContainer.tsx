@@ -2,14 +2,15 @@ import React, { useState } from 'react';
 import { Grid, Card, CardMedia, CardContent, Typography, useMediaQuery, useTheme, Box } from '@mui/material';
 import { v4 as uuidv4 } from 'uuid';
 import { Channel } from 'types';
+import { useNavigate } from 'react-router-dom';
+import ChannelListCard from './ChannelListCard';
 
 // Define la interfaz de Playlist
 interface PlayListVideoContainerProps {
   channels: Channel[];
-  onSelectChannel: ({ id, name }: { id: string; name: string }) => void;
 }
 
-const ChannelListContainer: React.FC<PlayListVideoContainerProps> = ({ channels, onSelectChannel }) => {
+const ChannelListContainer: React.FC<PlayListVideoContainerProps> = ({ channels }) => {
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
   const isMediumScreen = useMediaQuery(theme.breakpoints.down('md'));
@@ -40,49 +41,7 @@ const ChannelListContainer: React.FC<PlayListVideoContainerProps> = ({ channels,
                 maxWidth: `${cardMaxWidth}px`,
               }}
             >
-              <Card
-                onClick={() => onSelectChannel({ id: channel.channelId, name: channel.name })}
-                sx={{ borderRadius: '12px', overflow: 'hidden', height: 'fit-content', cursor: 'pointer' }}
-              >
-                <CardMedia
-                  component="img"
-                  image={channel.thumbnail} // Si hay un error, no se mostrará la imagen
-                  alt={channel.name}
-                  sx={{
-                    width: '100%',
-                    height: 'auto', // Altura fija para la imagen
-                    backgroundColor: 'transparent', // Fondo gris si hay un error
-                    objectFit: 'cover', // Mantiene la proporción de la imagen
-                  }}
-                />
-                <CardContent
-                  sx={{
-                    padding: '12px !important',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    justifyContent: 'space-between',
-                  }}
-                >
-                  <Typography
-                    variant="h6"
-                    component="h4"
-                    sx={{
-                      textAlign: 'center',
-                      fontSize: '14px',
-                      fontWeight: 'bold',
-                      lineHeight: '22px',
-                      minHeight: '44px', // Reservamos espacio para 3 líneas
-                      overflow: 'hidden',
-                      textOverflow: 'ellipsis',
-                      display: '-webkit-box',
-                      WebkitBoxOrient: 'vertical',
-                      WebkitLineClamp: 2, // Permitimos hasta 3 líneas
-                    }}
-                  >
-                    {channel.name}
-                  </Typography>
-                </CardContent>
-              </Card>
+              <ChannelListCard channel={channel} />
             </Grid>
           );
         })}

@@ -19,12 +19,11 @@ import { Playlist, Video } from 'types';
 import Landing from 'pages/Landing';
 
 function App() {
-  // Estados para el canal, video y playlist seleccionados
   const [selectedChannel, setSelectedChannel] = useState<{ id: string; name: string } | null>(null);
   const [selectedVideo, setSelectedVideo] = useState<Video | null>(null);
   const [selectedPlaylist, setSelectedPlaylist] = useState<Playlist | null>(null);
 
-  const isMobile = useMediaQuery('(max-width: 600px)'); // Usamos estado para determinar si el dispositivo es móvil
+  const isMobile = useMediaQuery('(max-width: 600px)'); // Verificamos si es un dispositivo móvil
 
   const { user, loading, setUser } = useUser();
   const auth = getAuth();
@@ -34,13 +33,13 @@ function App() {
     const provider = new GoogleAuthProvider();
     try {
       if (isMobile) {
-        await signInWithRedirect(auth, provider); // Usamos signInWithRedirect en móviles
+        await signInWithRedirect(auth, provider); // Redireccionar en móviles
+        navigate('/channel-list');
       } else {
-        const result = await signInWithPopup(auth, provider); // Usamos signInWithPopup en desktops
-        const user = result.user;
-
-        setUser(user);
-        console.log('Login exitoso:', user);
+        const result = await signInWithPopup(auth, provider); // Usar popup en desktops
+        setUser(result.user);
+        navigate('/channel-list');
+        console.log('Login exitoso:', result.user);
       }
     } catch (error) {
       console.error('Error en la autenticación:', error);
@@ -57,23 +56,41 @@ function App() {
     }
   };
 
+  // Verificar el resultado de la redirección después de iniciar sesión
+  useEffect(() => {
+    const fetchRedirectResult = async () => {
+      try {
+        const result = await getRedirectResult(auth);
+        if (result?.user) {
+          setUser(result.user);
+          alert('Login exitoso después de redirección:');
+        }
+      } catch (error) {
+        alert('Error al manejar el resultado de la redirección:');
+        console.error('Error al manejar el resultado de la redirección:', error);
+      }
+    };
+
+    fetchRedirectResult();
+  }, [auth, setUser]);
+
+  // Navegación automática según la selección
   useEffect(() => {
     if (loading) return; // No hacer nada mientras loading es true
 
-    if (user) {
-      // Lógica para navegar basándonos en el estado de selección
-      if (!selectedChannel) {
-        navigate('/channel-list');
-      } else if (selectedChannel && !selectedPlaylist && !selectedVideo) {
-        navigate(`/channel-detail/${selectedChannel.id}/${selectedChannel.name}`);
-      } else if (selectedChannel && selectedPlaylist && !selectedVideo) {
-        navigate(`/playlist-detail/${selectedPlaylist.id}`);
-      } else if (selectedChannel && selectedVideo) {
-        navigate(`/videoPlayer/${selectedChannel.id}/videos/${selectedVideo.id}`);
-      }
-    } else {
-      navigate('/login');
-    }
+    // if (user) {
+    //   if (!selectedChannel) {
+    //     navigate('/channel-list');
+    //   } else if (selectedChannel && !selectedPlaylist && !selectedVideo) {
+    //     navigate(`/channel-detail/${selectedChannel.id}/${selectedChannel.name}`);
+    //   } else if (selectedChannel && selectedPlaylist && !selectedVideo) {
+    //     navigate(`/playlist-detail/${selectedPlaylist.id}`);
+    //   } else if (selectedChannel && selectedVideo) {
+    //     navigate(`/videoPlayer/${selectedChannel.id}/videos/${selectedVideo.id}`);
+    //   }
+    // } else {
+    //   navigate('/login');
+    // }
   }, [selectedChannel, selectedPlaylist, selectedVideo, navigate, user, loading]);
 
   useEffect(() => {
@@ -82,20 +99,6 @@ function App() {
     }
   }, [selectedVideo]);
 
-  useEffect(() => {
-    const auth = getAuth();
-    getRedirectResult(auth)
-      .then((result) => {
-        if (result?.user) {
-          setUser(result.user);
-          console.log('Login exitoso después de redirección:', result.user);
-        }
-      })
-      .catch((error) => {
-        console.error('Error al manejar el resultado de la redirección:', error);
-      });
-  }, []);
-
   return (
     <>
       <AppBar position="static">
@@ -103,7 +106,7 @@ function App() {
           <Typography variant="h6" sx={{ flexGrow: 1 }}>
             SAFE YOUTUBE
           </Typography>
-          {!user ? (
+          {/* {!user ? (
             <Button color="inherit" onClick={handleGoogleLogin}>
               Login
             </Button>
@@ -111,51 +114,43 @@ function App() {
             <Button color="inherit" onClick={handleLogout}>
               Logout
             </Button>
-          )}
+          )} */}
         </Toolbar>
       </AppBar>
 
       <Routes>
         <Route path="/" element={<Navigate to="/channel-list" />} />
-        <Route path="/login" element={<Landing />} />
+        {/* <Route path="/login" element={<Landing />} /> */}
         <Route
           path="/channel-list"
           element={
-            <AuthGuard>
-              <ChannelList onSelectChannel={setSelectedChannel} />
-            </AuthGuard>
+            // <AuthGuard>
+            <ChannelList />
+            // </AuthGuard>
           }
         />
         <Route
           path="/channel-detail/:channelId/:channelName"
           element={
-            <AuthGuard>
-              <ChannelDetail
-                setSelectedPlaylist={setSelectedPlaylist}
-                setSelectedChannel={setSelectedChannel}
-                setSelectedVideo={setSelectedVideo}
-              />
-            </AuthGuard>
+            // <AuthGuard>
+            <ChannelDetail />
+            // </AuthGuard>
           }
         />
         <Route
-          path="/playlist-detail/:playlistId"
+          path="/playlist-detail/:playlistId/:playlistName"
           element={
-            <AuthGuard>
-              <PlayListDetail
-                setSelectedPlaylist={setSelectedPlaylist}
-                selectedPlaylist={selectedPlaylist}
-                setSelectedVideo={setSelectedVideo}
-              />
-            </AuthGuard>
+            // <AuthGuard>
+            <PlayListDetail />
+            // </AuthGuard>
           }
         />
         <Route
-          path="/videoPlayer/:channelId/videos/:videoId"
+          path="/videoPlayer/:videoId"
           element={
-            <AuthGuard>
-              <VideoPlayer setSelectedVideo={setSelectedVideo} selectedVideo={selectedVideo} />
-            </AuthGuard>
+            // <AuthGuard>
+            <VideoPlayer />
+            // </AuthGuard>
           }
         />
       </Routes>

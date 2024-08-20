@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Grid, Card, CardMedia, CardContent, Typography, useMediaQuery, useTheme, Box } from '@mui/material';
 import { v4 as uuidv4 } from 'uuid';
+import { useNavigate } from 'react-router-dom';
 
 // Define la interfaz de Playlist
 interface Playlist {
@@ -12,19 +13,22 @@ interface Playlist {
 
 interface PlayListVideoContainerProps {
   playlists: Playlist[];
-  setSelectedPlaylist: (playlist: Playlist | null) => void;
 }
 
-const PlayListVideoContainer: React.FC<PlayListVideoContainerProps> = ({
-  playlists,
-  setSelectedPlaylist,
-}) => {
+const PlayListVideoContainer: React.FC<PlayListVideoContainerProps> = ({ playlists }) => {
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
   const isMediumScreen = useMediaQuery(theme.breakpoints.down('md'));
 
   const cardMinWidth = 270; // Ancho mínimo de la tarjeta
   const cardMaxWidth = 340; // Ancho máximo de la tarjeta
+
+  const navigate = useNavigate();
+
+  const redirectToPlayListDetail = (playlistId: string, playlistName: string) => {
+    const encodedPlaylistName = encodeURIComponent(playlistName);
+    navigate(`/playlist-detail/${playlistId}/${encodedPlaylistName}`);
+  };
 
   return (
     <Box
@@ -49,7 +53,7 @@ const PlayListVideoContainer: React.FC<PlayListVideoContainerProps> = ({
             }}
           >
             <Card
-              onClick={() => setSelectedPlaylist(playlist)}
+              onClick={() => redirectToPlayListDetail(playlist.id, playlist.title)}
               sx={{ borderRadius: '12px', overflow: 'hidden', height: 'fit-content', cursor: 'pointer' }}
             >
               <CardMedia

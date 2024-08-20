@@ -1,22 +1,20 @@
 import React, { useEffect, useState, useCallback, Dispatch } from 'react';
 import { Typography, Grid, Tabs, Tab, Box, TextField, Button, useTheme, useMediaQuery } from '@mui/material';
 import { Playlist, Video } from 'types';
-import { useParams } from 'react-router-dom';
+import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import VideoListContainer from 'components/VideoListContainer';
 import { getPlaylistsByChannelId } from 'services/getPlaylistsByChannelId';
 import { getGeneralPlaylistId } from 'services/getgeneralIdPlaylist';
 import { getVideosIdFromPlaylistId } from 'services/getVideosIdFromPlaylistId';
 import { getVideosDetails } from 'services/getVideosDetails';
 import PlayListVideoContainer from 'components/PlayListVideosContainer';
+import KeyboardArrowLeftOutlinedIcon from '@mui/icons-material/KeyboardArrowLeftOutlined';
 
-const ChannelDetail: React.FC<{
-  setSelectedPlaylist: Dispatch<React.SetStateAction<Playlist | null>>;
-  setSelectedChannel: Dispatch<React.SetStateAction<{ id: string; name: string } | null>>;
-  setSelectedVideo: Dispatch<React.SetStateAction<Video | null>>;
-}> = ({ setSelectedPlaylist, setSelectedChannel, setSelectedVideo }) => {
+const ChannelDetail: React.FC = () => {
   const { channelId, channelName } = useParams();
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
+  const navigate = useNavigate();
 
   // height of top components
   const heightTopComponents = isSmallScreen ? '100px' : '200px';
@@ -32,9 +30,6 @@ const ChannelDetail: React.FC<{
   // Playlists
   const [playlists, setPlaylists] = useState<Playlist[]>([]);
   const [playlistsNextPageToken, setPlaylistsNextPageToken] = useState<string | null>(null);
-
-  // Busqueda de videos
-  const [searchQuery, setSearchQuery] = useState<string>('');
 
   // Cambio de pestañas
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
@@ -116,22 +111,29 @@ const ChannelDetail: React.FC<{
   }, [channelId, tabIndex]);
 
   const handleBackClick = () => {
-    setSelectedChannel(null);
+    navigate('/channel-list');
   };
 
   return (
     <>
       {/* Input y botón de búsqueda */}
       <Button
-        variant="contained"
-        color="primary"
-        style={{ margin: isSmallScreen ? '20px 0 0 20px' : '20px 0 0 50px' }}
+        startIcon={<KeyboardArrowLeftOutlinedIcon sx={{ position: 'relative', top: '-1px' }} />}
+        sx={{
+          position: 'fixed',
+          top: '12px',
+          left: '50%',
+          fontSize: '16px',
+          transform: 'translateX(-50%)',
+          zIndex: 1000,
+          color: 'white',
+        }}
         onClick={handleBackClick}
       >
         Volver
       </Button>
       <Typography variant="h5" sx={{ width: '100%', textAlign: 'center', marginTop: '20px' }}>
-        {channelName}
+        {channelName && decodeURIComponent(channelName)}
       </Typography>
 
       <Tabs value={tabIndex} onChange={handleTabChange} centered sx={{ marginBottom: '30px' }}>
@@ -140,14 +142,14 @@ const ChannelDetail: React.FC<{
       </Tabs>
 
       {tabIndex === 0 && (
-        <Box onScroll={handleScrollVideos} sx={{ overflowY: 'auto', height: 'calc(100vh - 255px)' }}>
-          <VideoListContainer videos={generalVideos} setSelectedVideo={setSelectedVideo} />
+        <Box onScroll={handleScrollVideos} sx={{ overflowY: 'auto', height: 'calc(100vh - 194px)' }}>
+          <VideoListContainer videos={generalVideos} />
         </Box>
       )}
 
       {tabIndex === 1 && (
-        <Box onScroll={handleScrollPlaylists} sx={{ overflowY: 'auto', height: 'calc(100vh - 255px)' }}>
-          <PlayListVideoContainer playlists={playlists} setSelectedPlaylist={setSelectedPlaylist} />
+        <Box onScroll={handleScrollPlaylists} sx={{ overflowY: 'auto', height: 'calc(100vh - 194px)' }}>
+          <PlayListVideoContainer playlists={playlists} />
         </Box>
       )}
     </>

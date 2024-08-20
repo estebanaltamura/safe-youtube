@@ -2,31 +2,23 @@ import React, { Dispatch, useCallback, useEffect, useState } from 'react';
 
 import { Button, Typography, useMediaQuery, useTheme } from '@mui/material';
 import VideoListContainer from 'components/VideoListContainer';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { getVideosDetails } from 'services/getVideosDetails';
 import { getVideosIdFromPlaylistId } from 'services/getVideosIdFromPlaylistId';
 import { Playlist, Video } from 'types';
+import KeyboardArrowLeftOutlinedIcon from '@mui/icons-material/KeyboardArrowLeftOutlined';
+import { Box } from '@mui/system';
 
-interface PlayListDetailProps {
-  setSelectedPlaylist: (playlist: Playlist | null) => void;
-  selectedPlaylist: Playlist | null;
-  setSelectedVideo: Dispatch<React.SetStateAction<Video | null>>;
-}
-
-const PlayListDetail: React.FC<PlayListDetailProps> = ({
-  setSelectedPlaylist,
-  selectedPlaylist,
-  setSelectedVideo,
-}) => {
-  const { playlistId } = useParams();
+const PlayListDetail: React.FC = () => {
+  const { playlistId, playlistName } = useParams();
 
   const [isFetching, setIsFetching] = useState(false);
   const [generalVideos, setGeneralVideos] = useState<Video[]>([]);
   const [nextPageToken, setNextPageToken] = useState<string | null>(null);
 
-  const theme = useTheme();
+  const navigate = useNavigate();
 
-  const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
+  const theme = useTheme();
 
   const handleScroll = useCallback(
     async (event: React.UIEvent<HTMLDivElement>) => {
@@ -41,6 +33,7 @@ const PlayListDetail: React.FC<PlayListDetailProps> = ({
   );
 
   const fetchVideos = async (pageToken: string | null = null) => {
+    console.log('fetchea');
     if (!playlistId) return;
 
     try {
@@ -62,6 +55,7 @@ const PlayListDetail: React.FC<PlayListDetailProps> = ({
   };
 
   useEffect(() => {
+    console.log(playlistId);
     if (playlistId) {
       setGeneralVideos([]);
       fetchVideos();
@@ -69,23 +63,32 @@ const PlayListDetail: React.FC<PlayListDetailProps> = ({
   }, [playlistId]);
 
   const handleBackClick = () => {
-    setSelectedPlaylist(null);
+    navigate(-1);
   };
 
   return (
-    <div onScroll={handleScroll} style={{ overflowY: 'auto', height: '100vh' }}>
+    <div>
       <Button
-        variant="contained"
-        color="primary"
-        style={{ margin: isSmallScreen ? '20px 0 0 20px' : '20px 0 0 50px' }}
+        startIcon={<KeyboardArrowLeftOutlinedIcon sx={{ position: 'relative', top: '-1px' }} />}
+        sx={{
+          position: 'fixed',
+          top: '12px',
+          left: '50%',
+          fontSize: '16px',
+          transform: 'translateX(-50%)',
+          zIndex: 1000,
+          color: 'white',
+        }}
         onClick={handleBackClick}
       >
         Volver
       </Button>
       <Typography variant="h5" sx={{ width: '100%', textAlign: 'center', marginTop: '20px' }}>
-        {selectedPlaylist && selectedPlaylist.title}
+        {playlistName && decodeURIComponent(playlistName)}
       </Typography>
-      <VideoListContainer videos={generalVideos} setSelectedVideo={setSelectedVideo} />
+      <Box onScroll={handleScroll} sx={{ overflowY: 'auto', height: 'calc(100vh - 116px)' }}>
+        <VideoListContainer videos={generalVideos} />
+      </Box>
     </div>
   );
 };

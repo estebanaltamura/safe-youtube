@@ -1,92 +1,99 @@
-import React, { Dispatch, useEffect, useRef, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import React, { useEffect, useRef, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Box, Button } from '@mui/material';
-import { Video } from 'types';
+import KeyboardArrowLeftOutlinedIcon from '@mui/icons-material/KeyboardArrowLeftOutlined';
 
-interface VideoPlayerProps {
-  setSelectedVideo: Dispatch<React.SetStateAction<Video | null>>;
-  selectedVideo: Video | null;
+declare global {
+  interface Window {
+    YT: any;
+    onYouTubeIframeAPIReady: () => void;
+  }
 }
 
-const VideoPlayer: React.FC<VideoPlayerProps> = ({ setSelectedVideo, selectedVideo }) => {
+const VideoPlayer: React.FC = () => {
   const { videoId } = useParams();
-  const [videoEnded, setVideoEnded] = useState(false); // Para controlar si el video ha terminado
-  const [isPaused, setIsPaused] = useState(false); // Para controlar si el video está en pausa
-  const iframeRef = useRef<HTMLIFrameElement>(null);
+  const [player, setPlayer] = useState<any>(null);
+  const [isPaused, setIsPaused] = useState(false);
+  const iframeRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
+
+  const thumbnailUrl = `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
 
   const handleBackClick = () => {
-    setSelectedVideo(null);
+    navigate(-1);
   };
 
   useEffect(() => {
-    const handlePlayerStateChange = (event: MessageEvent) => {
-      const { data } = event;
+    const loadYouTubeAPI = () => {
+      // Si la API de YouTube ya está cargada, inicializar directamente
+      if (window.YT && window.YT.Player) {
+        initializePlayer();
+      } else {
+        // Cargar la API de YouTube si no está cargada
+        const script = document.createElement('script');
+        script.src = 'https://www.youtube.com/iframe_api';
+        document.body.appendChild(script);
 
-      console.log('Player state change:', data);
-      try {
-        const parsedData = JSON.parse(data);
-        // Comprobamos si es un evento de cambio de estado del reproductor
-        if (parsedData.event === 'onStateChange') {
-          switch (parsedData.info) {
-            case 1: // Video en reproducción
-              setIsPaused(false);
-              console.log('Video is playing');
-              break;
-            case 2: // Video en pausa
-              setIsPaused(true);
-              console.log('Video is paused');
-              break;
-            case 0: // Video finalizado
-              setVideoEnded(true);
-              console.log('Video has ended');
-              break;
-            default:
-              break;
-          }
-        }
-      } catch (error) {
-        console.error('Error parsing message:', error);
+        // Inicializar el reproductor cuando la API esté lista
+        window.onYouTubeIframeAPIReady = () => {
+          initializePlayer();
+        };
       }
     };
 
-    // Añadimos el listener para detectar cambios de estado en el video
-    window.addEventListener('message', handlePlayerStateChange);
+    const initializePlayer = () => {
+      const newPlayer = new window.YT.Player(iframeRef.current, {
+        videoId: videoId,
+        events: {
+          onReady: onPlayerReady,
+          onStateChange: onPlayerStateChange,
+        },
+        playerVars: {
+          autoplay: 1,
+          controls: 1,
+          rel: 0,
+          modestbranding: 1,
+          showinfo: 0,
+          fs: 1,
+          disablekb: 1,
+          iv_load_policy: 3,
+          playsinline: 1,
+        },
+      });
+      setPlayer(newPlayer);
+    };
+
+    loadYouTubeAPI();
 
     return () => {
-      // Removemos el listener cuando el componente se desmonta
-      window.removeEventListener('message', handlePlayerStateChange);
+      player?.destroy();
     };
-  }, [iframeRef]);
+  }, [videoId]);
 
-  // useEffect(() => {
-  //   // Escuchar mensajes del iframe para detectar el fin del video y pausa
-  //   const handleMessage = (event: MessageEvent) => {
-  //     const { data } = event;
-  //     try {
-  //       const parsedData = JSON.parse(data);
-  //       if (parsedData.event === 'onStateChange') {
-  //         // Video pausado
-  //         if (parsedData.info === 2) {
-  //           setIsPaused(true);
-  //         }
-  //         // Video finalizado
-  //         if (parsedData.info === 0) {
-  //           setVideoEnded(true);
-  //         }
-  //       }
-  //     } catch (error) {
-  //       console.error('Error parsing message:', error);
-  //     }
-  //   };
+  const onPlayerReady = (event: any) => {
+    event.target.playVideo();
+  };
 
-  //   window.addEventListener('message', handleMessage);
-
-  //   return () => window.removeEventListener('message', handleMessage);
-  // }, []);
+  const onPlayerStateChange = (event: any) => {
+    switch (event.data) {
+      case window.YT.PlayerState.PLAYING:
+        setIsPaused(false);
+        break;
+      case window.YT.PlayerState.PAUSED:
+        setIsPaused(true);
+        break;
+      case window.YT.PlayerState.ENDED:
+        setIsPaused(true);
+        break;
+      default:
+        break;
+    }
+  };
 
   return (
     <>
       <Button
+        startIcon={<KeyboardArrowLeftOutlinedIcon sx={{ position: 'relative', top: '-1px' }} />}
         sx={{
           position: 'fixed',
           top: '12px',
@@ -105,40 +112,42 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ setSelectedVideo, selectedVid
         sx={{
           width: '100%',
           background: '#000',
+          position: 'relative',
+          paddingTop: '56.25%', // Aspect ratio 16:9
+          height: 0,
         }}
       >
-        {/* Mostrar miniatura si el video ha terminado o está pausado */}
-        {(videoEnded || isPaused) && selectedVideo && (
+        <div
+          ref={iframeRef}
+          id="player"
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            zIndex: 1,
+          }}
+        ></div>
+
+        {/* Superposición que se mostrará cuando el video esté pausado */}
+        {isPaused && (
           <Box
             sx={{
               position: 'absolute',
+              top: 0,
               left: 0,
               width: '100%',
-              height: 'calc(100vh - 64px)',
-              backgroundImage: `url(${selectedVideo.thumbnail})`,
+              height: 'calc(100vh - 64px - 50px)', // Deja 50px para los controles
+              backgroundColor: 'black', // Fondo negro pleno
+              backgroundImage: `url(${thumbnailUrl})`,
               backgroundSize: 'cover',
               backgroundPosition: 'center',
-              zIndex: 1,
+              zIndex: 2, // Asegurarnos de que esté sobre el video pero bajo los controles
+              pointerEvents: 'none', // Permitir interacción con los controles de YouTube
             }}
           />
         )}
-
-        <iframe
-          ref={iframeRef}
-          src={`https://www.youtube.com/embed/${selectedVideo?.id}?autoplay=1&controls=1&rel=0&modestbranding=1&showinfo=0&fs=1&disablekb=1&iv_load_policy=3&playsinline=1`}
-          frameBorder="0"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowFullScreen
-          title="YouTube video player"
-          style={{
-            position: 'absolute',
-            top: '64px',
-            left: 0,
-            width: '100%',
-            height: 'calc(100vh - 64px)',
-            zIndex: 0,
-          }}
-        />
       </Box>
     </>
   );

@@ -5,22 +5,20 @@ import { useUser } from 'contexts/userContext';
 import getChannelsByChildId from 'services/getChannelsByChildId';
 import { Channel } from 'types';
 
-interface ChannelProps {
-  onSelectChannel: ({ id, name }: { id: string; name: string }) => void;
-}
-
-const ChannelList: React.FC<ChannelProps> = ({ onSelectChannel }) => {
+const ChannelList: React.FC = () => {
   const { user } = useUser();
   const [channels, setChannels] = useState<Channel[]>([]);
 
   const fetchChannels = async (childId: string) => {
     const channels: Channel[] | [] = await getChannelsByChildId('123456');
+
+    console.log(channels);
     setChannels(channels);
   };
 
   useEffect(() => {
     if (user?.uid) {
-      fetchChannels('123456'); // Replace '123456' with the appropriate childId as needed
+      fetchChannels('123456');
     }
   }, [user]);
 
@@ -29,7 +27,7 @@ const ChannelList: React.FC<ChannelProps> = ({ onSelectChannel }) => {
       <Typography variant="h5" sx={{ width: '100%', textAlign: 'center', marginTop: '20px' }}>
         Canales
       </Typography>
-      <ChannelListContainer channels={channels} onSelectChannel={onSelectChannel} />
+      {channels.length > 0 && <ChannelListContainer channels={channels} />}
     </>
   );
 };
