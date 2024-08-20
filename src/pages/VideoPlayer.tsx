@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Box, Button } from '@mui/material';
 import KeyboardArrowLeftOutlinedIcon from '@mui/icons-material/KeyboardArrowLeftOutlined';
@@ -12,12 +12,8 @@ declare global {
 
 const VideoPlayer: React.FC = () => {
   const { videoId } = useParams();
-  const [player, setPlayer] = useState<any>(null);
-  const [isPaused, setIsPaused] = useState(false);
   const iframeRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
-
-  const thumbnailUrl = `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
 
   const handleBackClick = () => {
     navigate(-1);
@@ -25,16 +21,13 @@ const VideoPlayer: React.FC = () => {
 
   useEffect(() => {
     const loadYouTubeAPI = () => {
-      // Si la API de YouTube ya está cargada, inicializar directamente
       if (window.YT && window.YT.Player) {
         initializePlayer();
       } else {
-        // Cargar la API de YouTube si no está cargada
         const script = document.createElement('script');
         script.src = 'https://www.youtube.com/iframe_api';
         document.body.appendChild(script);
 
-        // Inicializar el reproductor cuando la API esté lista
         window.onYouTubeIframeAPIReady = () => {
           initializePlayer();
         };
@@ -42,53 +35,24 @@ const VideoPlayer: React.FC = () => {
     };
 
     const initializePlayer = () => {
-      const newPlayer = new window.YT.Player(iframeRef.current, {
+      new window.YT.Player(iframeRef.current, {
         videoId: videoId,
-        events: {
-          onReady: onPlayerReady,
-          onStateChange: onPlayerStateChange,
-        },
         playerVars: {
           autoplay: 1,
           controls: 1,
           rel: 0,
           modestbranding: 1,
           showinfo: 0,
-          fs: 1,
+          fs: 0, // Pantalla completa deshabilitada
           disablekb: 1,
           iv_load_policy: 3,
           playsinline: 1,
         },
       });
-      setPlayer(newPlayer);
     };
 
     loadYouTubeAPI();
-
-    return () => {
-      player?.destroy();
-    };
   }, [videoId]);
-
-  const onPlayerReady = (event: any) => {
-    event.target.playVideo();
-  };
-
-  const onPlayerStateChange = (event: any) => {
-    switch (event.data) {
-      case window.YT.PlayerState.PLAYING:
-        setIsPaused(false);
-        break;
-      case window.YT.PlayerState.PAUSED:
-        setIsPaused(true);
-        break;
-      case window.YT.PlayerState.ENDED:
-        setIsPaused(true);
-        break;
-      default:
-        break;
-    }
-  };
 
   return (
     <>
@@ -113,7 +77,7 @@ const VideoPlayer: React.FC = () => {
           width: '100%',
           background: '#000',
           position: 'relative',
-          height: 'calc(100vh - 64px)', // Máxima altura del video
+          height: 'calc(100vh - 64px)', // Máxima altura del video menos barra de navegación
         }}
       >
         <div
@@ -129,24 +93,20 @@ const VideoPlayer: React.FC = () => {
           }}
         ></div>
 
-        {/* Superposición que se mostrará cuando el video esté pausado */}
-        {isPaused && (
-          <Box
-            sx={{
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              width: '100%',
-              height: 'calc(100vh - 64px - 34px)', // Deja 50px para los controles
-              backgroundColor: 'black', // Fondo negro pleno
-              backgroundImage: `url(${thumbnailUrl})`,
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
-              zIndex: 2, // Asegurarnos de que esté sobre el video pero bajo los controles
-              pointerEvents: 'none', // Permitir interacción con los controles de YouTube
-            }}
-          />
-        )}
+        {/* Capa transparente que evita clics en el video pero deja libres los controles */}
+        <Box
+          sx={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: 'calc(100vh - 64px - 50px)', // Deja 50px para los controles
+            backgroundColor: 'rgba(0, 0, 0, 0)', // Capa completamente transparente
+            zIndex: 2, // Asegurarnos de que esté sobre el video
+            pointerEvents: 'auto', // Permitir interacción con esta capa
+          }}
+          onClick={(e) => e.stopPropagation()} // Evitar que los clics pasen al video
+        />
       </Box>
     </>
   );

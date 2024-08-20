@@ -5,7 +5,7 @@ import ChannelDetail from 'pages/ChannelDetail';
 import PlayListDetail from 'pages/PlayListDetail';
 import VideoPlayer from 'pages/VideoPlayer';
 import AuthGuard from 'guard/authGuard';
-import { AppBar, Toolbar, Button, Typography, useMediaQuery } from '@mui/material';
+import { AppBar, Toolbar, Button, Typography, useMediaQuery, Box } from '@mui/material';
 import { useUser } from 'contexts/userContext';
 import {
   getAuth,
@@ -101,6 +101,8 @@ function App() {
       <AppBar position="static">
         <Toolbar>
           <img src="/favicon.png" alt="Safe Youtube" style={{ width: '64px', height: 'auto' }} />
+          <Box sx={{ display: 'flex', flexGrow: 1 }}></Box>
+          <>Copy</>
           {/* {!user ? (
             <Button color="inherit" onClick={handleGoogleLogin}>
               Login
