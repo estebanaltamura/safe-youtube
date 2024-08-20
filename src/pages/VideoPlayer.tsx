@@ -53,7 +53,7 @@ const VideoPlayer: React.FC = () => {
   }, [videoId]);
 
   return (
-    <>
+    <Box sx={{ height: '100vh', backgroundColor: '#000' }}>
       <Box
         sx={{
           width: '100%',
@@ -78,7 +78,7 @@ const VideoPlayer: React.FC = () => {
 
         {/* Capa transparente que evita clics en el video pero deja libres los controles */}
       </Box>
-    </>
+    </Box>
   );
 };
 
