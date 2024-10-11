@@ -1,7 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Box, Button, useMediaQuery, useTheme } from '@mui/material';
-import KeyboardArrowLeftOutlinedIcon from '@mui/icons-material/KeyboardArrowLeftOutlined';
+import { Box, useMediaQuery, useTheme } from '@mui/material';
 
 declare global {
   interface Window {
@@ -17,7 +16,28 @@ const VideoPlayer: React.FC = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
+  const FOUR_HOURS = 240 * 60 * 1000; // 3 segundos para probar (puedes cambiarlo a 4 horas)
+  let timeoutId: NodeJS.Timeout;
+
+  // Función para redirigir a Google
+  const handleInactivity = () => {
+    window.location.href = 'https://www.google.com'; // Redirige a Google
+  };
+
+  // Resetea el temporizador cuando hay actividad
+  const resetTimer = () => {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(handleInactivity, FOUR_HOURS);
+  };
+
   useEffect(() => {
+    // Inicializa el temporizador de inactividad
+    timeoutId = setTimeout(handleInactivity, FOUR_HOURS);
+
+    // Escucha eventos de actividad del usuario
+    window.addEventListener('mousemove', resetTimer);
+    window.addEventListener('keydown', resetTimer);
+
     const loadYouTubeAPI = () => {
       if (window.YT && window.YT.Player) {
         initializePlayer();
@@ -50,6 +70,13 @@ const VideoPlayer: React.FC = () => {
     };
 
     loadYouTubeAPI();
+
+    // Limpieza: elimina los event listeners y el temporizador cuando el componente se desmonta
+    return () => {
+      clearTimeout(timeoutId);
+      window.removeEventListener('mousemove', resetTimer);
+      window.removeEventListener('keydown', resetTimer);
+    };
   }, [videoId]);
 
   return (
@@ -75,8 +102,6 @@ const VideoPlayer: React.FC = () => {
             zIndex: 1,
           }}
         ></div>
-
-        {/* Capa transparente que evita clics en el video pero deja libres los controles */}
       </Box>
     </Box>
   );
